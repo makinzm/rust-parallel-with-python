@@ -1,14 +1,20 @@
 use pyo3::prelude::*;
+use pyo3_asyncio::tokio::future_into_py;
+use tokio::time::{sleep, Duration};
 
-/// Formats the sum of two numbers as string.
+/// 非同期に指定された秒数待機する関数
 #[pyfunction]
-fn sum_as_string(a: usize, b: usize) -> PyResult<String> {
-    Ok((a + b).to_string())
+fn async_sleep(py: Python, secs: u64) -> PyResult<&PyAny> {
+    future_into_py(py, async move {
+        sleep(Duration::from_secs(secs)).await;
+        Ok(())
+    })
 }
 
-/// A Python module implemented in Rust.
+/// Pythonモジュールとして公開する
 #[pymodule]
-fn my_rust_extension(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(sum_as_string, m)?)?;
+fn my_rust_extension(_py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(async_sleep, m)?)?;
     Ok(())
 }
+

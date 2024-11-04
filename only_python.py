@@ -1,8 +1,8 @@
 import time
+import csv
 import concurrent.futures
 import multiprocessing
 import numpy as np
-import pandas as pd
 
 # Task sizes
 task_sizes = [100, 500, 1000, 5000, 10000]
@@ -12,11 +12,15 @@ iterations = 100
 def calculate_squares(n):
     return [i ** 2 for i in range(n)]
 
-# Function to calculate mean and variance
-def calculate_mean_and_variance(results):
-    mean = np.mean(results)
-    variance = np.var(results)
-    return mean, variance
+# Function to measure execution time for each method
+def measure_execution_time(func, *args, iterations=100):
+    execution_times = []
+    for _ in range(iterations):
+        start_time = time.perf_counter()
+        func(*args)
+        end_time = time.perf_counter()
+        execution_times.append(end_time - start_time)
+    return execution_times
 
 # Sequential approach (no parallelism)
 def sequential_approach(n):
@@ -33,34 +37,25 @@ def multiprocessing_approach(n):
     with multiprocessing.Pool() as pool:
         return pool.map(calculate_squares, [n] * iterations)
 
-# Collect results in a DataFrame
-results = []
+# CSV writing
+with open('only_python_execution_times.csv', mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Iteration', 'Method', 'Execution Time (s)', 'Task Size (n)'])
 
-# Run tests for each method and task size
-for n in task_sizes:
-    # Sequential (no parallelism)
-    start_time = time.time()
-    sequential_results = sequential_approach(n)
-    duration = time.time() - start_time
-    mean, variance = calculate_mean_and_variance(sequential_results)
-    results.append(["Sequential", n, mean, variance, duration])
-    
-    # ThreadPoolExecutor
-    start_time = time.time()
-    threadpool_results = threadpool_approach(n)
-    duration = time.time() - start_time
-    mean, variance = calculate_mean_and_variance(threadpool_results)
-    results.append(["ThreadPoolExecutor", n, mean, variance, duration])
-    
-    # Multiprocessing
-    start_time = time.time()
-    multiprocessing_results = multiprocessing_approach(n)
-    duration = time.time() - start_time
-    mean, variance = calculate_mean_and_variance(multiprocessing_results)
-    results.append(["Multiprocessing", n, mean, variance, duration])
+    for n in task_sizes:
+        # Measure and record execution time for each method
+        # Sequential
+        sequential_times = measure_execution_time(sequential_approach, n, iterations=iterations)
+        for i in range(iterations):
+            writer.writerow([i + 1, 'Sequential', sequential_times[i], n])
 
-# Convert results to DataFrame and save as CSV
-df = pd.DataFrame(results, columns=["Method", "Task Size (n)", "Mean", "Variance", "Execution Time (s)"])
-df.to_csv("only_python_execution_times.csv", index=False)
+        # ThreadPoolExecutor
+        threadpool_times = measure_execution_time(threadpool_approach, n, iterations=iterations)
+        for i in range(iterations):
+            writer.writerow([i + 1, 'ThreadPoolExecutor', threadpool_times[i], n])
 
+        # Multiprocessing
+        multiprocessing_times = measure_execution_time(multiprocessing_approach, n, iterations=iterations)
+        for i in range(iterations):
+            writer.writerow([i + 1, 'Multiprocessing', multiprocessing_times[i], n])
 

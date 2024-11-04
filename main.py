@@ -19,7 +19,7 @@ def measure_execution_time(func, *args, iterations=100):
     return execution_times
 
 if __name__ == "__main__":
-    task_sizes = [100, 500, 1000, 5000]  # タスク数のリスト
+    task_sizes = [100, 500, 1000, 5000, 10000]  # タスク数のリスト
     iterations = 100  # 繰り返し回数
 
     # CSVファイルへの書き込み

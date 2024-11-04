@@ -7,6 +7,9 @@ requires-python = ">=3.11"
 dependencies = [
     "maturin>=1.7.4",
     "pip>=24.3.1",
+    "polars>=1.12.0",
+    "matplotlib>=3.9.2",
+    "seaborn>=0.13.2",
 ]
 
 [build-system]

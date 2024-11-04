@@ -19,6 +19,12 @@ def measure_execution_time(func, *args, iterations=100):
     return execution_times
 
 if __name__ == "__main__":
+    # Check the result is the same
+    n = 100
+    python_result = parallel_square_computation(n)
+    rust_result = my_project.parallel_computation(n)
+    assert python_result == rust_result
+
     task_sizes = [100, 500, 1000, 5000, 10000]  # タスク数のリスト
     iterations = 100  # 繰り返し回数
 

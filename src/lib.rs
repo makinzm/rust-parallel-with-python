@@ -27,7 +27,7 @@ fn parallel_computation(n: usize) -> PyResult<Vec<usize>> {
 
 /// Pythonモジュールとして公開
 #[pymodule]
-fn my_parallel_project(py: Python, m: &PyModule) -> PyResult<()> {
+fn rust_parallel_with_python(py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(parallel_computation, m)?)?;
     Ok(())
 }

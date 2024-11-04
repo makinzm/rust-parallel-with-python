@@ -40,3 +40,20 @@ plt.tight_layout()
 plt.savefig('execution_times_histograms.png')
 plt.show()
 
+# グラフ描画用のデータを準備
+plt.figure(figsize=(10, 6))
+
+# Pythonの実行時間を青、Rustの実行時間をオレンジで散布図を描画
+plt.scatter(df['Task Size (n)'], df['Python Time (s)'], color='blue', alpha=0.5, label='Python')
+plt.scatter(df['Task Size (n)'], df['Rust Time (s)'], color='orange', alpha=0.5, label='Rust')
+
+# ラベルとタイトルの設定
+plt.xlabel('Task Size (n)')
+plt.ylabel('Execution Time (s)')
+plt.title('Python vs Rust Execution Time by Task Size')
+plt.legend()
+
+# グラフの保存
+plt.savefig('execution_times_comparison.png')
+plt.show()
+

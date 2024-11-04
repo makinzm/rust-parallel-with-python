@@ -3,6 +3,10 @@
 ```shell
 sudo apt-get update
 sudo apt-get install python3.11-dev
+
+cargo build
+
+uv run maturin develop
 ```
 
 # Questions?
